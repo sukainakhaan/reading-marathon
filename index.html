@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Reading Marathon — Speaking Fraternity</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #1B3A2D;
+    --forest-light: #2A5441;
+    --parchment: #F5ECD7;
+    --parchment-dark: #EAD9BC;
+    --gold: #C9A84C;
+    --gold-light: #E8C96B;
+    --slate: #8B9EA8;
+    --ink: #1A1A1A;
+    --white: #FFFFFF;
+    --shadow: rgba(27,58,45,0.12);
+    --danger: #B3261E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--parchment);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* AUTH GATE */
+  .auth-gate {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--forest);
+    padding: 24px;
+  }
+  .auth-card {
+    background: var(--parchment);
+    border-radius: 16px;
+    padding: 36px 32px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  }
+  .auth-brand {
+    font-family: 'Playfair Display', serif;
+    color: var(--forest);
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .auth-brand span { display: block; font-size: 0.75rem; color: var(--slate); font-style: italic; margin-top: 4px; }
+  .auth-tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--parchment-dark); border-radius: 10px; padding: 4px; }
+  .auth-tab {
+    flex: 1;
+    border: none;
+    background: none;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--slate);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .auth-tab.active { background: var(--forest); color: var(--gold); }
+  .auth-form { display: flex; flex-direction: column; gap: 10px; }
+  .auth-form input {
+    border: 1px solid var(--parchment-dark);
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    background: var(--white);
+    outline: none;
+  }
+  .auth-form input:focus { border-color: var(--forest); }
+  .auth-submit {
+    background: var(--forest);
+    color: var(--gold);
+    border: none;
+    border-radius: 8px;
+    padding: 11px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: background 0.2s;
+  }
+  .auth-submit:hover { background: var(--forest-light); }
+  .auth-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+  .auth-error {
+    color: var(--danger);
+    font-size: 0.8rem;
+    margin-top: 12px;
+    text-align: center;
+    min-height: 1.2em;
+  }
+  .auth-hint { font-size: 0.72rem; color: var(--slate); text-align: center; margin-top: 16px; line-height: 1.6; }
+  .auth-hint code { background: var(--parchment-dark); padding: 1px 5px; border-radius: 4px; font-size: 0.92em; }
+  .empty-state { color: var(--slate); font-size: 0.82rem; padding: 16px; text-align: center; font-style: italic; }
+
+  /* NAV */
+  nav {
+    background: var(--forest);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    gap: 12px;
+  }
+  .nav-brand {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .nav-brand span { color: var(--parchment); font-weight: 400; font-style: italic; }
+  .nav-links { display: flex; gap: 4px; align-items: center; }
+  .nav-link {
+    color: var(--parchment);
+    opacity: 0.7;
+    font-size: 0.82rem;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    border: none;
+    background: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-link:hover, .nav-link.active { opacity: 1; background: rgba(201,168,76,0.15); color: var(--gold); }
+  .nav-link svg { width: 15px; height: 15px; }
+  .nav-user {
+    display: flex; align-items: center; gap: 10px; margin-left: 8px;
+    padding-left: 14px; border-left: 1px solid rgba(245,236,215,0.15);
+  }
+  .nav-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--gold); color: var(--forest);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.72rem; flex-shrink: 0;
+  }
+  .nav-username { color: var(--parchment); font-size: 0.78rem; font-weight: 500; }
+  .nav-username .role-pill {
+    font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--gold); border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 10px; padding: 1px 6px; margin-left: 6px;
+  }
+  .logout-link {
+    color: rgba(245,236,215,0.6);
+    font-size: 0.78rem; cursor: pointer; border: none; background: none; padding: 6px 8px;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .logout-link:hover { color: var(--gold); }
+  .logout-link svg { width: 15px; height: 15px; }
+
+  /* HERO */
+  .hero {
+    background: var(--forest);
+    padding: 56px 32px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 60% 0%, rgba(201,168,76,0.08) 0%, transparent 60%);
+  }
+  .hero-eyebrow {
+    color: var(--gold);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--parchment);
+    font-size: clamp(1.8rem, 5vw, 3.2rem);
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .hero h1 em { color: var(--gold); font-style: italic; }
+  .hero p {
+    color: rgba(245,236,215,0.65);
+    font-size: 0.95rem;
+    max-width: 500px;
+    margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+  .stats-row { display: flex; justify-content: center; gap: 40px; position: relative; z-index: 1; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; color: var(--gold); display: block; line-height: 1;
+  }
+  .stat-label { font-size: 0.72rem; color: rgba(245,236,215,0.5); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+
+  /* MAIN LAYOUT */
+  .main { max-width: 1100px; margin: 0 auto; padding: 32px 24px; display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
+  .view { display: none; }
+  .view.active { display: block; }
+  /* single-column views (My Books / Discuss / Notes) span full width */
+  .view-wide { grid-column: 1 / -1; }
+
+  .page-head { margin-bottom: 24px; }
+  .page-head h1 {
+    font-family: 'Playfair Display', serif; color: var(--forest);
+    font-size: 1.7rem; margin-bottom: 4px;
+  }
+  .page-head p { color: var(--slate); font-size: 0.86rem; }
+
+  /* SECTION HEADINGS */
+  .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
+  .section-head h2 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--forest); }
+  .see-all {
+    font-size: 0.76rem; color: var(--gold); cursor: pointer; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase; border: none; background: none;
+  }
+  .see-all:hover { text-decoration: underline; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--forest); color: var(--gold); border: none; border-radius: 8px;
+    padding: 8px 14px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+    font-family: 'Inter', sans-serif; letter-spacing: 0.02em; transition: background 0.2s;
+  }
+  .btn:hover { background: var(--forest-light); }
+  .btn svg { width: 14px; height: 14px; }
+  .btn-ghost { background: var(--parchment); color: var(--forest); border: 1px solid var(--parchment-dark); }
+  .btn-ghost:hover { background: var(--parchment-dark); }
+  .btn-sm { padding: 5px 10px; font-size: 0.72rem; }
+  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  .icon-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--parchment-dark);
+    background: var(--white); color: var(--slate); cursor: pointer; transition: all 0.2s;
+  }
+  .icon-btn:hover { color: var(--forest); border-color: var(--forest); }
+  .icon-btn.danger:hover { color: var(--danger); border-color: var(--danger); }
+  .icon-btn svg { width: 15px; height: 15px; }
+
+  /* COMMUNITY SHELF */
+  .shelf-section { margin-bottom: 28px; }
+  .shelf-label { font-size: 0.72rem; color: var(--slate); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; }
+  .shelf {
+    background: var(--forest); border-radius: 12px; padding: 28px 24px 20px;
+    display: flex; align-items: flex-end; gap: 6px; overflow-x: auto; min-height: 140px;
+    position: relative; box-shadow: inset 0 -6px 0 rgba(0,0,0,0.3), 0 4px 20px var(--shadow);
+  }
+  .shelf::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 12px; background: #12291E; border-radius: 0 0 12px 12px; }
+  .book-spine {
+    width: 28px; height: 100px; border-radius: 3px 0 0 3px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    position: relative; flex-shrink: 0; transition: transform 0.2s, height 0.2s;
+    box-shadow: 2px 0 6px rgba(0,0,0,0.3);
+  }
+  .book-spine:hover { transform: translateY(-8px); height: 108px; }
+  .book-spine .spine-title {
+    writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg);
+    font-size: 0.6rem; font-weight: 600; color: rgba(255,255,255,0.85); letter-spacing: 0.05em;
+    padding: 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-height: 88px;
+  }
+  .book-tooltip {
+    position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: var(--parchment); padding: 8px 12px; border-radius: 8px;
+    font-size: 0.72rem; white-space: nowrap; opacity: 0; pointer-events: none;
+    transition: opacity 0.2s; z-index: 10; line-height: 1.5; text-align: center;
+  }
+  .book-spine:hover .book-tooltip { opacity: 1; }
+
+  /* PROGRESS CARDS */
+  .progress-grid { display: grid; gap: 14px; }
+  .progress-card {
+    background: var(--white); border-radius: 12px; padding: 18px 20px;
+    box-shadow: 0 2px 12px var(--shadow); border-left: 3px solid var(--forest);
+  }
+  .pc-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .avatar {
+    width: 36px; height: 36px; background: var(--forest); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; color: var(--gold);
+    font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+  }
+  .pc-meta { flex: 1; min-width: 0; }
+  .pc-name { font-weight: 600; font-size: 0.88rem; color: var(--ink); }
+  .pc-book { font-size: 0.76rem; color: var(--slate); font-style: italic; margin-top: 1px; }
+  .pc-badge { font-size: 0.65rem; padding: 3px 8px; border-radius: 20px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+  .badge-on-track { background: rgba(27,58,45,0.1); color: var(--forest); }
+  .badge-behind { background: rgba(201,168,76,0.15); color: #A07A20; }
+  .badge-finished { background: rgba(201,168,76,0.25); color: #7A5A10; }
+  .progress-bar-wrap { margin-bottom: 4px; }
+  .progress-bar-label { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--slate); margin-bottom: 5px; }
+  .progress-bar { background: var(--parchment-dark); border-radius: 99px; height: 7px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--forest), var(--forest-light)); transition: width 0.5s; }
+  .pc-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+  /* QUOTE WALL */
+  .quote-card { background: var(--forest); border-radius: 12px; padding: 22px; margin-bottom: 14px; position: relative; overflow: hidden; }
+  .quote-card::before {
+    content: '"'; position: absolute; top: -10px; left: 12px;
+    font-family: 'Playfair Display', serif; font-size: 7rem; color: rgba(201,168,76,0.12); line-height: 1;
+  }
+  .quote-text { font-family: 'Playfair Display', serif; font-style: italic; color: var(--parchment); font-size: 0.92rem; line-height: 1.7; position: relative; z-index: 1; margin-bottom: 14px; }
+  .quote-source { display: flex; align-items: center; gap: 10px; }
+  .quote-book { font-size: 0.72rem; color: var(--gold); font-weight: 600; }
+  .quote-sharer { font-size: 0.7rem; color: rgba(245,236,215,0.45); }
+  .quote-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .q-btn {
+    font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(201,168,76,0.3);
+    background: none; color: rgba(245,236,215,0.6); cursor: pointer; transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .q-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .q-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.12); }
+  .q-btn svg { width: 13px; height: 13px; }
+
+  /* SIDEBAR */
+  .sidebar { display: flex; flex-direction: column; gap: 20px; }
+  .card { background: var(--white); border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px var(--shadow); }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--forest); margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
+  .card-title .icon-btn { width: 26px; height: 26px; }
+
+  /* GOAL TRACKER */
+  .goal-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .goal-check { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--parchment-dark); flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+  .goal-check.done { border-color: var(--forest); background: var(--forest); }
+  .goal-check.done::after { content: '✓'; font-size: 0.65rem; color: var(--gold); font-weight: 700; }
+  .goal-text { font-size: 0.82rem; color: var(--ink); line-height: 1.4; flex: 1; }
+  .goal-text.done { text-decoration: line-through; color: var(--slate); }
+  .goal-del { opacity: 0; transition: opacity 0.2s; }
+  .goal-item:hover .goal-del { opacity: 1; }
+  .goal-del { background: none; border: none; color: var(--slate); cursor: pointer; padding: 2px; display: flex; }
+  .goal-del:hover { color: var(--danger); }
+  .goal-del svg { width: 14px; height: 14px; }
+  .add-row { display: flex; gap: 6px; margin-top: 12px; }
+  .add-row input {
+    flex: 1; border: 1px solid var(--parchment-dark); border-radius: 8px; padding: 8px 10px;
+    font-family: 'Inter', sans-serif; font-size: 0.8rem; background: var(--parchment); outline: none;
+  }
+  .add-row input:focus { border-color: var(--forest); }
+  .streak-badge { background: linear-gradient(135deg, var(--forest), var(--forest-light)); color: var(--gold); border-radius: 10px; padding: 14px; text-align: center; margin-top: 14px; }
+  .streak-num { font-family: 'Playfair Display', serif; font-size: 2.2rem; display: block; }
+  .streak-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; }
+
+  /* LEADERBOARD */
+  .lb-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--parchment-dark); }
+  .lb-item:last-child { border-bottom: none; }
+  .lb-rank { font-size: 0.7rem; color: var(--slate); width: 16px; font-weight: 600; }
+  .lb-rank.gold { color: var(--gold); }
+  .lb-name { font-size: 0.82rem; font-weight: 500; flex: 1; }
+  .lb-pages { font-size: 0.75rem; color: var(--slate); }
+  .lb-bar { width: 50px; background: var(--parchment-dark); border-radius: 99px; height: 4px; overflow: hidden; }
+  .lb-fill { height: 100%; background: var(--gold); border-radius: 99px; }
+
+  /* EVENTS */
+  .event-item { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+  .event-date { background: var(--forest); color: var(--gold); border-radius: 8px; padding: 6px 10px; text-align: center; flex-shrink: 0; min-width: 44px; }
+  .ev-day { font-family: 'Playfair Display', serif; font-size: 1.2rem; display: block; line-height: 1; }
+  .ev-mon { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; }
+  .event-info { flex: 1; min-width: 0; }
+  .ev-title { font-size: 0.84rem; font-weight: 600; color: var(--ink); }
+  .ev-desc { font-size: 0.73rem; color: var(--slate); margin-top: 2px; line-height: 1.4; }
+  .ev-by { font-size: 0.65rem; color: var(--slate); margin-top: 3px; font-style: italic; }
+  .event-del { background: none; border: none; color: var(--slate); cursor: pointer; padding: 2px; opacity: 0; transition: opacity 0.2s; display: flex; }
+  .event-item:hover .event-del { opacity: 1; }
+  .event-del:hover { color: var(--danger); }
+  .event-del svg { width: 14px; height: 14px; }
+
+  /* POST BOX */
+  .post-box { background: var(--white); border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 12px var(--shadow); margin-bottom: 24px; }
+  .post-tabs { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
+  .post-tab { font-size: 0.76rem; padding: 5px 14px; border-radius: 20px; border: 1px solid var(--parchment-dark); background: none; color: var(--slate); cursor: pointer; transition: all 0.2s; font-weight: 500; }
+  .post-tab.active { background: var(--forest); color: var(--gold); border-color: var(--forest); }
+  .post-input { width: 100%; border: 1px solid var(--parchment-dark); border-radius: 8px; padding: 12px 14px; font-family: 'Inter', sans-serif; font-size: 0.84rem; color: var(--ink); background: var(--parchment); resize: none; min-height: 70px; outline: none; transition: border-color 0.2s; }
+  .post-input:focus { border-color: var(--forest); }
+  .post-attach { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .post-attach select, .post-attach input { border: 1px solid var(--parchment-dark); border-radius: 8px; padding: 7px 10px; font-family: 'Inter', sans-serif; font-size: 0.78rem; background: var(--parchment); outline: none; }
+  .post-attach select:focus, .post-attach input:focus { border-color: var(--forest); }
+  .post-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 12px; }
+  .post-hint { font-size: 0.72rem; color: var(--slate); }
+  .post-submit { background: var(--forest); color: var(--gold); border: none; border-radius: 8px; padding: 8px 18px; font-size: 0.8rem; font-weight: 600; cursor: pointer; letter-spacing: 0.03em; transition: background 0.2s; }
+  .post-submit:hover { background: var(--forest-light); }
+  .post-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* MY BOOKS */
+  .books-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+
+  /* DISCUSS */
+  .discuss-card { background: var(--white); border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 12px var(--shadow); margin-bottom: 16px; }
+  .dc-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .dc-body { font-size: 0.9rem; line-height: 1.65; color: #2a2a2a; margin-bottom: 12px; white-space: pre-wrap; }
+  .dc-actions { display: flex; gap: 8px; border-top: 1px solid var(--parchment-dark); padding-top: 12px; }
+  .dc-btn { font-size: 0.74rem; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--parchment-dark); background: var(--white); color: var(--slate); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s; }
+  .dc-btn:hover { border-color: var(--forest); color: var(--forest); }
+  .dc-btn.active { border-color: var(--gold); color: #A07A20; background: rgba(201,168,76,0.1); }
+  .dc-btn svg { width: 13px; height: 13px; }
+  .comments { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--parchment-dark); }
+  .comment { display: flex; gap: 10px; margin-bottom: 12px; }
+  .comment .avatar { width: 28px; height: 28px; font-size: 0.66rem; }
+  .comment-body { flex: 1; }
+  .comment-author { font-size: 0.78rem; font-weight: 600; color: var(--forest); }
+  .comment-text { font-size: 0.82rem; color: #333; line-height: 1.5; margin-top: 1px; }
+  .comment-time { font-size: 0.66rem; color: var(--slate); margin-left: 8px; font-weight: 400; }
+
+  /* NOTES */
+  .note-card { background: var(--white); border-left: 3px solid var(--gold); border-radius: 10px; padding: 16px 18px; box-shadow: 0 2px 12px var(--shadow); margin-bottom: 14px; }
+  .note-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .note-tag { font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; color: var(--gold); }
+  .note-text { font-size: 0.88rem; line-height: 1.6; color: #2a2a2a; font-style: italic; }
+  .note-src { font-size: 0.72rem; color: var(--slate); margin-top: 8px; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(18,41,30,0.55);
+    display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+    backdrop-filter: blur(2px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--parchment); border-radius: 16px; width: 100%; max-width: 440px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4); max-height: 88vh; overflow-y: auto;
+  }
+  .modal-head { padding: 22px 24px 0; display: flex; align-items: flex-start; justify-content: space-between; }
+  .modal-head h3 { font-family: 'Playfair Display', serif; color: var(--forest); font-size: 1.25rem; }
+  .modal-head p { font-size: 0.78rem; color: var(--slate); margin-top: 3px; }
+  .modal-close { background: none; border: none; cursor: pointer; color: var(--slate); padding: 4px; display: flex; }
+  .modal-close:hover { color: var(--forest); }
+  .modal-close svg { width: 20px; height: 20px; }
+  .modal-body { padding: 18px 24px 24px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 0.74rem; font-weight: 600; color: var(--forest); margin-bottom: 5px; letter-spacing: 0.02em; }
+  .field input, .field select, .field textarea {
+    width: 100%; border: 1px solid var(--parchment-dark); border-radius: 8px; padding: 10px 12px;
+    font-family: 'Inter', sans-serif; font-size: 0.86rem; background: var(--white); outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--forest); }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .field-row { display: flex; gap: 12px; }
+  .field-row .field { flex: 1; }
+  .swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+  .swatch { width: 30px; height: 30px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; }
+  .swatch.sel { border-color: var(--ink); box-shadow: 0 0 0 2px var(--white) inset; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .modal-actions .btn { flex: 1; justify-content: center; padding: 11px; }
+  .modal-error { color: var(--danger); font-size: 0.78rem; margin-top: 10px; min-height: 1em; }
+  .catalog-list { max-height: 240px; overflow-y: auto; margin: 4px 0 8px; }
+  .catalog-item { display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid var(--parchment-dark); }
+  .catalog-item:last-child { border-bottom: none; }
+  .ci-meta { flex: 1; min-width: 0; }
+  .ci-title { font-size: 0.84rem; font-weight: 600; color: var(--ink); }
+  .ci-author { font-size: 0.72rem; color: var(--slate); }
+
+  /* TOAST */
+  .toast-wrap { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .toast {
+    background: var(--forest); color: var(--parchment); padding: 11px 18px; border-radius: 10px;
+    font-size: 0.84rem; box-shadow: 0 8px 24px rgba(0,0,0,0.3); animation: toastIn 0.25s ease;
+    max-width: 90vw;
+  }
+  .toast.err { background: var(--danger); }
+  .toast.ok { background: var(--forest); }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; }
+    .feed-view .sidebar { order: 2; }
+    .stats-row { gap: 24px; }
+    .nav-username { display: none; }
+    .nav-brand span { display: none; }
+    nav { padding: 0 14px; }
+    .nav-link span.label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================ AUTH GATE ============================ -->
+<div id="authGate" class="auth-gate">
+  <div class="auth-card">
+    <div class="auth-brand">📖 The Reading Marathon <span>by Speaking Fraternity</span></div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="loginTabBtn" onclick="showAuthTab('login')">Log In</button>
+      <button class="auth-tab" id="signupTabBtn" onclick="showAuthTab('signup')">Sign Up</button>
+    </div>
+
+    <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginPassword" placeholder="Password" required>
+      <button type="submit" class="auth-submit">Log In</button>
+    </form>
+
+    <form id="signupForm" class="auth-form" style="display:none" onsubmit="handleSignup(event)">
+      <input type="text" id="signupName" placeholder="Full name" required>
+      <input type="email" id="signupEmail" placeholder="Email" required>
+      <input type="password" id="signupPassword" placeholder="Password (min. 8 characters)" required minlength="8">
+      <button type="submit" class="auth-submit">Create Account</button>
+    </form>
+
+    <div id="authError" class="auth-error"></div>
+    <div class="auth-hint" id="demoHint"></div>
+  </div>
+</div>
+
+<!-- ============================ MAIN APP ============================ -->
+<div id="appRoot" style="display:none">
+
+<nav>
+  <div class="nav-brand">📖 The Reading Marathon <span>by Speaking Fraternity</span></div>
+  <div class="nav-links">
+    <button class="nav-link active" data-view="feed" onclick="showView('feed')"><span class="label">Feed</span></button>
+    <button class="nav-link" data-view="mybooks" onclick="showView('mybooks')"><span class="label">My Books</span></button>
+    <button class="nav-link" data-view="discuss" onclick="showView('discuss')"><span class="label">Discuss</span></button>
+    <button class="nav-link" data-view="notes" onclick="showView('notes')"><span class="label">Notes</span></button>
+    <div class="nav-user">
+      <div class="nav-avatar" id="navAvatar">—</div>
+      <span class="nav-username" id="navUsername"></span>
+      <button class="logout-link" onclick="handleLogout()" title="Log out" id="logoutBtn"></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== FEED VIEW ===== -->
+<div id="view-feed" class="view active feed-view">
+  <div class="hero">
+    <div class="hero-eyebrow" id="heroEyebrow">Summer Reading Marathon</div>
+    <h1>A fraternity that reads<br>together <em>speaks</em> together</h1>
+    <p>Track your pages, share your insights, stay grounded. Reading sharpens the mind — community keeps it connected.</p>
+    <div class="stats-row">
+      <div class="stat"><span class="stat-num" id="statReaders">—</span><div class="stat-label">Readers</div></div>
+      <div class="stat"><span class="stat-num" id="statBooksActive">—</span><div class="stat-label">Books Active</div></div>
+      <div class="stat"><span class="stat-num" id="statPagesWeek">—</span><div class="stat-label">Pages This Week</div></div>
+      <div class="stat"><span class="stat-num" id="statQuotes">—</span><div class="stat-label">Quotes Shared</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="feed">
+      <!-- COMMUNITY SHELF -->
+      <div class="shelf-section">
+        <div class="section-head">
+          <h2>The Community Shelf</h2>
+          <button class="btn btn-sm" id="addBookBtn" onclick="openBooksModal()"></button>
+        </div>
+        <div class="shelf-label">Hover a spine to see who's reading it · click to read it too</div>
+        <div class="shelf" id="shelf"></div>
+      </div>
+
+      <!-- POST COMPOSER -->
+      <div class="post-box">
+        <div class="post-tabs">
+          <button class="post-tab active" data-type="progress_update" onclick="setTab(this)">Progress Update</button>
+          <button class="post-tab" data-type="quote" onclick="setTab(this)">Share a Quote</button>
+          <button class="post-tab" data-type="note" onclick="setTab(this)">Reading Note</button>
+          <button class="post-tab" data-type="discussion" onclick="setTab(this)">Discussion</button>
+        </div>
+        <textarea id="postInput" class="post-input" placeholder="What did you read today? Share your page count, a thought, or something that struck you…"></textarea>
+        <div class="post-attach" id="postAttach" style="display:none">
+          <select id="postBook"><option value="">— attach a book (optional) —</option></select>
+          <input type="number" id="postPage" min="1" placeholder="Page #" style="width:90px">
+        </div>
+        <div class="post-footer">
+          <span class="post-hint" id="postHint">📚 Share with the fraternity</span>
+          <button class="post-submit" id="postSubmitBtn" onclick="handlePostSubmit()">Share with fraternity</button>
+        </div>
+      </div>
+
+      <!-- MEMBER PROGRESS -->
+      <div class="section-head">
+        <h2>Member Progress</h2>
+        <button class="see-all" id="progressSeeAll" onclick="toggleProgressAll()">All →</button>
+      </div>
+      <div class="progress-grid" id="progressGrid"><div class="empty-state">Loading member progress…</div></div>
+
+      <!-- QUOTE WALL -->
+      <div class="section-head" style="margin-top:32px">
+        <h2>Quote Wall</h2>
+        <button class="see-all" id="quoteSeeAll" onclick="loadQuotes(50)">show more →</button>
+      </div>
+      <div id="quoteWall"><div class="empty-state">Loading quotes…</div></div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="card">
+        <div class="card-title">My Reading Goals</div>
+        <div id="goalsList"><div class="empty-state">Loading goals…</div></div>
+        <div class="add-row">
+          <input type="text" id="newGoalInput" placeholder="Add a goal…" onkeydown="if(event.key==='Enter')handleAddGoal()">
+          <button class="icon-btn" onclick="handleAddGoal()" title="Add goal" id="addGoalBtn"></button>
+        </div>
+        <div class="streak-badge">
+          <span class="streak-num" id="streakNum">🔥 —</span>
+          <div class="streak-label">Day reading streak</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Pages This Week</div>
+        <div id="leaderboardList"><div class="empty-state">Loading leaderboard…</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          Fraternity Events
+          <button class="icon-btn" onclick="openEventModal()" title="Add event" id="addEventBtn"></button>
+        </div>
+        <div id="eventsList"><div class="empty-state">Loading events…</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MY BOOKS VIEW ===== -->
+<div id="view-mybooks" class="view">
+  <div class="main"><div class="view-wide">
+    <div class="page-head" style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px">
+      <div>
+        <h1>My Books</h1>
+        <p>Log your pages here — that's what feeds your streak and the weekly leaderboard.</p>
+      </div>
+      <button class="btn" onclick="openBooksModal()" id="myBooksAddBtn"></button>
+    </div>
+    <div class="books-grid" id="myBooksGrid"><div class="empty-state">Loading your books…</div></div>
+  </div></div>
+</div>
+
+<!-- ===== DISCUSS VIEW ===== -->
+<div id="view-discuss" class="view">
+  <div class="main"><div class="view-wide">
+    <div class="page-head">
+      <h1>Discussion</h1>
+      <p>Questions, debates, and threads the fraternity is talking about.</p>
+    </div>
+    <div id="discussList"><div class="empty-state">Loading discussions…</div></div>
+  </div></div>
+</div>
+
+<!-- ===== NOTES VIEW ===== -->
+<div id="view-notes" class="view">
+  <div class="main"><div class="view-wide">
+    <div class="page-head">
+      <h1>Saved Notes</h1>
+      <p>Quotes and notes you've saved from the feed. Your private collection.</p>
+    </div>
+    <div id="notesList"><div class="empty-state">Loading notes…</div></div>
+  </div></div>
+</div>
+
+</div><!-- /appRoot -->
+
+<!-- MODAL HOST + TOASTS -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox"></div>
+</div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+  // ============================================================
+  // API base. The frontend is served BY the backend, so the API
+  // lives at the same origin under /api — no URL to paste, no CORS.
+  // (If you ever host the HTML somewhere else, set API_OVERRIDE to
+  //  your backend URL, e.g. 'https://reading-marathon.onrender.com/api')
+  // ============================================================
+  const API_OVERRIDE = '';
+  const API_BASE = API_OVERRIDE || (location.protocol === 'file:' ? 'http://localhost:4000/api' : '/api');
+
+  let currentUser = null;
+  let currentToken = null;
+  let activePostType = 'progress_update';
+  let progressShowingAll = false;
+  let myEntriesCache = [];
+
+  // ---------- SVG ICONS ----------
+  const ICONS = {
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    heart:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>',
+    chat:'<path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-4-.9L3 20l1.3-3.9A8.4 8.4 0 1 1 21 11.5z"/>',
+    bookmark:'<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>',
+    trash:'<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>',
+    pencil:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+    book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5z"/>',
+    calendar:'<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>',
+    logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+    close:'<path d="M18 6 6 18M6 6l12 12"/>',
+    check:'<path d="M20 6 9 17l-5-5"/>'
+  };
+  function icon(name, size) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"${size?` width="${size}" height="${size}"`:''}>${ICONS[name]||''}</svg>`;
+  }
+
+  // ---------- low-level API helper ----------
+  async function api(path, { method = 'GET', body, auth = true } = {}) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (auth && currentToken) headers['Authorization'] = 'Bearer ' + currentToken;
+    const res = await fetch(API_BASE + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+    let data = null;
+    try { data = await res.json(); } catch (_) {}
+    if (!res.ok) throw new Error((data && data.error) || `Request failed (${res.status})`);
+    return data;
+  }
+
+  // ---------- TOASTS ----------
+  function toast(msg, type = 'ok') {
+    const wrap = document.getElementById('toastWrap');
+    const el = document.createElement('div');
+    el.className = 'toast ' + (type === 'err' ? 'err' : 'ok');
+    el.textContent = msg;
+    wrap.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 2600);
+  }
+
+  // ---------- MODAL ----------
+  function openModal(html) {
+    document.getElementById('modalBox').innerHTML = html;
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ---------- AUTH ----------
+  function showAuthTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('loginTabBtn').classList.toggle('active', isLogin);
+    document.getElementById('signupTabBtn').classList.toggle('active', !isLogin);
+    document.getElementById('loginForm').style.display = isLogin ? 'flex' : 'none';
+    document.getElementById('signupForm').style.display = isLogin ? 'none' : 'flex';
+    document.getElementById('authError').textContent = '';
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('authError');
+    errorEl.textContent = '';
+    try {
+      const { token, user } = await api('/auth/login', { method: 'POST', body: { email, password }, auth: false });
+      onAuthSuccess(token, user);
+    } catch (err) { errorEl.textContent = err.message; }
+  }
+
+  async function handleSignup(e) {
+    e.preventDefault();
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const errorEl = document.getElementById('authError');
+    errorEl.textContent = '';
+    try {
+      const { token, user } = await api('/auth/signup', { method: 'POST', body: { name, email, password }, auth: false });
+      onAuthSuccess(token, user);
+    } catch (err) { errorEl.textContent = err.message; }
+  }
+
+  function onAuthSuccess(token, user) {
+    currentToken = token;
+    currentUser = user;
+    localStorage.setItem('marathonToken', token);
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('appRoot').style.display = 'block';
+    renderNavUser();
+    showView('feed');
+  }
+
+  function handleLogout() {
+    currentToken = null; currentUser = null;
+    localStorage.removeItem('marathonToken');
+    document.getElementById('appRoot').style.display = 'none';
+    document.getElementById('authGate').style.display = 'flex';
+    document.getElementById('loginForm').reset();
+  }
+
+  function renderNavUser() {
+    if (!currentUser) return;
+    document.getElementById('navAvatar').textContent = currentUser.initials || '?';
+    document.getElementById('navAvatar').style.background = currentUser.avatar_color || 'var(--gold)';
+    document.getElementById('navAvatar').style.color = '#fff';
+    const rolePill = currentUser.role === 'admin' ? '<span class="role-pill">Admin</span>' : '';
+    document.getElementById('navUsername').innerHTML = escapeHtml(currentUser.name) + rolePill;
+    document.getElementById('logoutBtn').innerHTML = icon('logout') + 'Log out';
+  }
+
+  async function tryRestoreSession() {
+    // Buttons that carry icons get them whether logged in or not.
+    document.getElementById('addBookBtn').innerHTML = icon('plus') + 'Add / Browse Books';
+    document.getElementById('addGoalBtn').innerHTML = icon('plus');
+    document.getElementById('addEventBtn').innerHTML = icon('plus');
+    document.getElementById('myBooksAddBtn').innerHTML = icon('plus') + 'Start a new book';
+    document.getElementById('demoHint').innerHTML =
+      'New here? Hit <b>Sign Up</b>. Or try the demo: <code>aisha@speakingfraternity.org</code> / <code>marathon123</code>';
+
+    const saved = localStorage.getItem('marathonToken');
+    if (!saved) return;
+    currentToken = saved;
+    try {
+      const { user } = await api('/auth/me');
+      currentUser = user;
+      document.getElementById('authGate').style.display = 'none';
+      document.getElementById('appRoot').style.display = 'block';
+      renderNavUser();
+      showView('feed');
+    } catch (_) {
+      currentToken = null;
+      localStorage.removeItem('marathonToken');
+    }
+  }
+
+  // ---------- VIEW SWITCHING ----------
+  function showView(name) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + name).classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === name));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (name === 'feed') loadFeed();
+    else if (name === 'mybooks') loadMyBooks();
+    else if (name === 'discuss') loadDiscuss();
+    else if (name === 'notes') loadNotes();
+  }
+
+  // ---------- FEED ----------
+  function loadFeed() {
+    loadStats(); loadShelf(); loadProgress(); loadQuotes(10);
+    loadGoals(); loadLeaderboard(); loadEvents(); loadComposerBooks();
+  }
+
+  async function loadStats() {
+    try {
+      const s = await api('/dashboard/stats');
+      document.getElementById('statReaders').textContent = s.readers;
+      document.getElementById('statBooksActive').textContent = s.booksActive;
+      document.getElementById('statPagesWeek').textContent = (s.pagesThisWeek || 0).toLocaleString();
+      document.getElementById('statQuotes').textContent = s.quotesShared;
+    } catch (err) { console.error('stats', err); }
+  }
+
+  async function loadShelf() {
+    const shelf = document.getElementById('shelf');
+    try {
+      const { shelf: entries } = await api('/books/shelf');
+      shelf.innerHTML = '';
+      if (!entries.length) { shelf.innerHTML = '<div class="empty-state" style="color:rgba(245,236,215,0.5)">No one is reading anything yet — add the first book!</div>'; return; }
+      entries.forEach(e => {
+        const spine = document.createElement('div');
+        spine.className = 'book-spine';
+        spine.style.background = e.spine_color || '#2D6A4F';
+        spine.style.height = (80 + (e.title.length % 4) * 9) + 'px';
+        spine.title = 'Read this too';
+        spine.onclick = () => confirmStartReading(e.book_id, e.title);
+        spine.innerHTML = `
+          <span class="spine-title">${escapeHtml(e.title)}</span>
+          <div class="book-tooltip">${escapeHtml(e.title)}<br><span style="color:var(--gold)">${escapeHtml(e.reader_name)}</span></div>`;
+        shelf.appendChild(spine);
+      });
+    } catch (err) { shelf.innerHTML = '<div class="empty-state">Couldn\'t load the shelf.</div>'; console.error(err); }
+  }
+
+  async function loadProgress() {
+    const grid = document.getElementById('progressGrid');
+    try {
+      const limit = progressShowingAll ? 100 : 20;
+      const { entries } = await api('/reading-entries?limit=' + limit);
+      document.getElementById('progressSeeAll').textContent = progressShowingAll ? 'show less ←' : `All →`;
+      if (!entries.length) { grid.innerHTML = '<div class="empty-state">No reading activity yet.</div>'; return; }
+      grid.innerHTML = entries.map(renderProgressCard).join('');
+    } catch (err) { grid.innerHTML = '<div class="empty-state">Couldn\'t load member progress.</div>'; console.error(err); }
+  }
+  function toggleProgressAll() { progressShowingAll = !progressShowingAll; loadProgress(); }
+
+  function renderProgressCard(e) {
+    const total = e.total_pages || 1;
+    const pct = Math.min(100, Math.round((e.current_page / total) * 100));
+    const badgeClass = e.status === 'finished' ? 'badge-finished' : e.status === 'behind' ? 'badge-behind' : 'badge-on-track';
+    const badgeLabel = e.status === 'finished' ? '✦ Finished' : e.status === 'behind' ? 'Behind' : 'On Track';
+    const barColor = e.status === 'finished' ? 'background:linear-gradient(90deg,var(--gold),var(--gold-light))' : '';
+    const avatarStyle = e.avatar_color ? `style="background:${e.avatar_color}"` : '';
+    return `
+      <div class="progress-card" ${e.status==='finished'?'style="border-left-color:var(--gold)"':''}>
+        <div class="pc-header">
+          <div class="avatar" ${avatarStyle}>${escapeHtml(e.initials || '?')}</div>
+          <div class="pc-meta">
+            <div class="pc-name">${escapeHtml(e.reader_name)}</div>
+            <div class="pc-book">${escapeHtml(e.title)}${e.author ? ' — ' + escapeHtml(e.author) : ''}</div>
+          </div>
+          <span class="pc-badge ${badgeClass}">${badgeLabel}</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-label">
+            <span>${e.status === 'finished' ? 'Completed' : `Page ${e.current_page} of ${total}`}</span>
+            <span>${pct}%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;${barColor}"></div></div>
+        </div>
+      </div>`;
+  }
+
+  // ---------- QUOTE WALL ----------
+  async function loadQuotes(limit = 10) {
+    const wall = document.getElementById('quoteWall');
+    try {
+      const { posts } = await api('/posts?type=quote&limit=' + limit);
+      if (!posts.length) { wall.innerHTML = '<div class="empty-state">No quotes shared yet — be the first!</div>'; return; }
+      wall.innerHTML = posts.map(p => `
+        <div class="quote-card">
+          <div class="quote-text">${escapeHtml(p.body)}</div>
+          <div class="quote-source"><div>
+            <div class="quote-book">${escapeHtml(p.book_title || 'Unknown book')}${p.page_number ? ' · p.' + p.page_number : ''}</div>
+            <div class="quote-sharer">Shared by ${escapeHtml(p.author_name)} · ${timeAgo(p.created_at)}</div>
+          </div></div>
+          <div class="quote-actions">
+            <button class="q-btn" onclick="handleResonate(${p.id}, this)">${icon('heart')}<span>${p.resonate_count}</span></button>
+            <button class="q-btn" onclick="openDiscussThread(${p.id})">${icon('chat')}<span>${p.comment_count}</span></button>
+            <button class="q-btn" onclick="handleSaveNote(${p.id}, this)">${icon('bookmark')}<span>Save</span></button>
+          </div>
+        </div>`).join('');
+    } catch (err) { wall.innerHTML = '<div class="empty-state">Couldn\'t load the quote wall.</div>'; console.error(err); }
+  }
+
+  async function handleResonate(postId, btn) {
+    try {
+      const { post, resonated } = await api(`/posts/${postId}/resonate`, { method: 'POST' });
+      btn.classList.toggle('active', resonated);
+      btn.querySelector('span').textContent = post.resonate_count;
+    } catch (err) { toast(err.message, 'err'); }
+  }
+
+  async function handleSaveNote(postId, btn) {
+    try {
+      await api(`/posts/${postId}/save`, { method: 'POST' });
+      btn.classList.add('active');
+      btn.querySelector('span').textContent = 'Saved';
+      toast('Saved to your notes');
+    } catch (err) { toast(err.message, 'err'); }
+  }
+
+  // ---------- POST COMPOSER ----------
+  function setTab(el) {
+    document.querySelectorAll('.post-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    activePostType = el.dataset.type;
+    const placeholders = {
+      progress_update: 'What did you read today? Share your page count, a thought, or something that struck you…',
+      quote: 'Paste a quote that stopped you in your tracks, then attach the book and page below…',
+      note: 'Write a reflection, summary, or insight from your reading. Others can learn from your notes…',
+      discussion: 'Start a conversation — a question, a debate, something your book made you think about…',
+    };
+    document.getElementById('postInput').placeholder = placeholders[activePostType] || '';
+    // Show book/page attach for quotes & progress updates
+    document.getElementById('postAttach').style.display = (activePostType === 'quote' || activePostType === 'progress_update') ? 'flex' : 'none';
+  }
+
+  async function loadComposerBooks() {
+    try {
+      const { entries } = await api(`/users/${currentUser.id}/reading-entries`);
+      myEntriesCache = entries;
+      const sel = document.getElementById('postBook');
+      sel.innerHTML = '<option value="">— attach a book (optional) —</option>' +
+        entries.map(e => `<option value="${e.book_id}" data-entry="${e.id}">${escapeHtml(e.title)}</option>`).join('');
+    } catch (err) { console.error('composer books', err); }
+  }
+
+  async function handlePostSubmit() {
+    const input = document.getElementById('postInput');
+    const btn = document.getElementById('postSubmitBtn');
+    const body = input.value.trim();
+    if (!body) { toast('Write something first', 'err'); return; }
+
+    const payload = { type: activePostType, body };
+    if (activePostType === 'quote' || activePostType === 'progress_update') {
+      const sel = document.getElementById('postBook');
+      const bookId = sel.value;
+      const page = document.getElementById('postPage').value;
+      if (bookId) {
+        payload.bookId = Number(bookId);
+        const opt = sel.options[sel.selectedIndex];
+        if (opt && opt.dataset.entry) payload.readingEntryId = Number(opt.dataset.entry);
+      }
+      if (page) payload.pageNumber = Number(page);
+    }
+
+    btn.disabled = true; btn.textContent = 'Sharing…';
+    try {
+      await api('/posts', { method: 'POST', body: payload });
+      input.value = ''; document.getElementById('postPage').value = '';
+      toast('Shared with the fraternity');
+      loadProgress(); loadQuotes(10); loadStats(); loadGoals();
+      if (activePostType === 'discussion') { /* visible under Discuss tab */ }
+    } catch (err) { toast('Could not post: ' + err.message, 'err'); }
+    finally { btn.disabled = false; btn.textContent = 'Share with fraternity'; }
+  }
+
+  // ---------- ADD / BROWSE BOOKS ----------
+  const SPINE_COLORS = ['#2D6A4F','#5C4033','#1B4D7A','#6B3A2A','#4A7C59','#7B3F00','#1A1A2E','#3D5A80','#264653','#2C3E50','#8B5E3C','#556B2F','#8B2252','#2F4F4F'];
+
+  async function openBooksModal() {
+    let catalog = [];
+    try { const r = await api('/books'); catalog = r.books; } catch (_) {}
+    const colorSwatches = SPINE_COLORS.map((c,i) =>
+      `<div class="swatch${i===0?' sel':''}" style="background:${c}" data-color="${c}" onclick="pickSwatch(this)"></div>`).join('');
+    const catalogHtml = catalog.length ? catalog.map(b => `
+      <div class="catalog-item">
+        <div style="width:8px;height:34px;border-radius:2px;background:${b.spine_color||'#2D6A4F'}"></div>
+        <div class="ci-meta"><div class="ci-title">${escapeHtml(b.title)}</div><div class="ci-author">${escapeHtml(b.author||'Unknown')} · ${b.total_pages} pp</div></div>
+        <button class="btn btn-sm" onclick="startReadingFromCatalog(${b.id}, '${escapeAttr(b.title)}')">Read it</button>
+      </div>`).join('') : '<div class="empty-state">No books in the catalog yet.</div>';
+
+    openModal(`
+      <div class="modal-head">
+        <div><h3>Add a Book</h3><p>Pick one already on the shelf, or add a brand-new title.</p></div>
+        <button class="modal-close" onclick="closeModal()">${icon('close')}</button>
+      </div>
+      <div class="modal-body">
+        <label style="font-size:0.74rem;font-weight:600;color:var(--forest);letter-spacing:0.02em">Already in the catalog</label>
+        <div class="catalog-list">${catalogHtml}</div>
+        <hr style="border:none;border-top:1px solid var(--parchment-dark);margin:16px 0">
+        <label style="font-size:0.74rem;font-weight:600;color:var(--forest);letter-spacing:0.02em">…or add a new book</label>
+        <div class="field" style="margin-top:8px"><input type="text" id="bkTitle" placeholder="Title *"></div>
+        <div class="field-row">
+          <div class="field"><input type="text" id="bkAuthor" placeholder="Author"></div>
+          <div class="field" style="max-width:130px"><input type="number" id="bkPages" min="1" placeholder="Total pages *"></div>
+        </div>
+        <div class="field"><label>Spine colour</label><div class="swatches" id="bkSwatches">${colorSwatches}</div></div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:#444;margin-top:4px;cursor:pointer">
+          <input type="checkbox" id="bkStart" checked style="width:auto"> Start reading it now (adds it to your books + the shelf)
+        </label>
+        <div class="modal-error" id="bkError"></div>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+          <button class="btn" id="bkSubmit" onclick="handleAddBook()">${icon('plus')} Add book</button>
+        </div>
+      </div>`);
+  }
+  function pickSwatch(el) {
+    el.parentElement.querySelectorAll('.swatch').forEach(s => s.classList.remove('sel'));
+    el.classList.add('sel');
+  }
+
+  async function handleAddBook() {
+    const title = document.getElementById('bkTitle').value.trim();
+    const author = document.getElementById('bkAuthor').value.trim();
+    const totalPages = document.getElementById('bkPages').value;
+    const start = document.getElementById('bkStart').checked;
+    const color = (document.querySelector('#bkSwatches .swatch.sel') || {}).dataset?.color || '#2D6A4F';
+    const errEl = document.getElementById('bkError');
+    errEl.textContent = '';
+    if (!title || !totalPages) { errEl.textContent = 'Title and total pages are required.'; return; }
+    const btn = document.getElementById('bkSubmit'); btn.disabled = true;
+    try {
+      const { book } = await api('/books', { method: 'POST', body: { title, author, totalPages: Number(totalPages), spineColor: color } });
+      if (start) await api('/reading-entries', { method: 'POST', body: { bookId: book.id } });
+      closeModal();
+      toast(start ? `Started reading "${book.title}"` : `Added "${book.title}" to the catalog`);
+      loadShelf(); loadStats(); loadComposerBooks();
+      if (document.getElementById('view-mybooks').classList.contains('active')) loadMyBooks();
+    } catch (err) { errEl.textContent = err.message; btn.disabled = false; }
+  }
+
+  async function startReadingFromCatalog(bookId, title) {
+    try {
+      await api('/reading-entries', { method: 'POST', body: { bookId } });
+      closeModal();
+      toast(`Started reading "${title}"`);
+      loadShelf(); loadStats(); loadComposerBooks();
+      if (document.getElementById('view-mybooks').classList.contains('active')) loadMyBooks();
+    } catch (err) { toast(err.message, 'err'); }
+  }
+  function confirmStartReading(bookId, title) {
+    openModal(`
+      <div class="modal-head"><div><h3>Read this book?</h3><p>Add “${escapeHtml(title)}” to your own shelf.</p></div>
+      <button class="modal-close" onclick="closeModal()">${icon('close')}</button></div>
+      <div class="modal-body"><div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal()">Not now</button>
+        <button class="btn" onclick="startReadingFromCatalog(${bookId}, '${escapeAttr(title)}')">${icon('book')} Start reading</button>
+      </div></div>`);
+  }
+
+  // ---------- MY BOOKS ----------
+  async function loadMyBooks() {
+    const grid = document.getElementById('myBooksGrid');
+    grid.innerHTML = '<div class="empty-state">Loading your books…</div>';
+    try {
+      const { entries } = await api(`/users/${currentUser.id}/reading-entries`);
+      myEntriesCache = entries;
+      if (!entries.length) {
+        grid.innerHTML = '<div class="empty-state">You haven\'t started any books yet. Hit “Start a new book”.</div>';
+        return;
+      }
+      grid.innerHTML = entries.map(e => {
+        const total = e.total_pages || 1;
+        const pct = Math.min(100, Math.round((e.current_page / total) * 100));
+        const finished = e.status === 'finished';
+        const badgeClass = finished ? 'badge-finished' : e.status === 'behind' ? 'badge-behind' : 'badge-on-track';
+        const badgeLabel = finished ? '✦ Finished' : e.status === 'behind' ? 'Behind pace' : 'On Track';
+        return `
+          <div class="progress-card" ${finished?'style="border-left-color:var(--gold)"':''}>
+            <div class="pc-header">
+              <div style="width:10px;height:40px;border-radius:2px;background:${e.spine_color||'#2D6A4F'}"></div>
+              <div class="pc-meta">
+                <div class="pc-name">${escapeHtml(e.title)}</div>
+                <div class="pc-book">${escapeHtml(e.author || 'Unknown author')}</div>
+              </div>
+              <span class="pc-badge ${badgeClass}">${badgeLabel}</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-label"><span>Page ${e.current_page} of ${total}</span><span>${pct}%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;${finished?'background:linear-gradient(90deg,var(--gold),var(--gold-light))':''}"></div></div>
+            </div>
+            ${finished ? '' : `<div class="pc-actions"><button class="btn btn-sm" onclick="openLogProgress(${e.id})">${icon('pencil')} Log pages</button></div>`}
+          </div>`;
+      }).join('');
+    } catch (err) { grid.innerHTML = '<div class="empty-state">Couldn\'t load your books.</div>'; console.error(err); }
+  }
+
+  function openLogProgress(entryId) {
+    const e = myEntriesCache.find(x => x.id === entryId);
+    if (!e) return;
+    openModal(`
+      <div class="modal-head">
+        <div><h3>Log your progress</h3><p>${escapeHtml(e.title)} · ${e.total_pages} pages</p></div>
+        <button class="modal-close" onclick="closeModal()">${icon('close')}</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>What page are you on now?</label>
+          <input type="number" id="lpPage" min="0" max="${e.total_pages}" value="${e.current_page}">
+          <p style="font-size:0.72rem;color:var(--slate);margin-top:6px">
+            You were on page ${e.current_page}. Pages read today are counted toward your streak and the weekly leaderboard.
+          </p>
+        </div>
+        <div class="modal-error" id="lpError"></div>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+          <button class="btn" id="lpSubmit" onclick="handleLogProgress(${entryId}, ${e.current_page})">${icon('check')} Save progress</button>
+        </div>
+      </div>`);
+  }
+
+  async function handleLogProgress(entryId, oldPage) {
+    const newPage = Number(document.getElementById('lpPage').value);
+    const errEl = document.getElementById('lpError');
+    errEl.textContent = '';
+    if (isNaN(newPage) || newPage < 0) { errEl.textContent = 'Enter a valid page number.'; return; }
+    const pagesReadToday = Math.max(0, newPage - oldPage);
+    const btn = document.getElementById('lpSubmit'); btn.disabled = true;
+    try {
+      await api(`/reading-entries/${entryId}/progress`, { method: 'PATCH', body: { currentPage: newPage, pagesReadToday } });
+      closeModal();
+      toast(pagesReadToday > 0 ? `Logged ${pagesReadToday} pages — nice!` : 'Progress updated');
+      loadMyBooks(); loadShelf(); loadProgress(); loadStats();
+    } catch (err) { errEl.textContent = err.message; btn.disabled = false; }
+  }
+
+  // ---------- DISCUSS ----------
+  async function loadDiscuss() {
+    const list = document.getElementById('discussList');
+    list.innerHTML = '<div class="empty-state">Loading discussions…</div>';
+    try {
+      const { posts } = await api('/posts?type=discussion&limit=30');
+      if (!posts.length) {
+        list.innerHTML = '<div class="empty-state">No discussions yet. Start one from the Feed using the “Discussion” tab.</div>';
+        return;
+      }
+      list.innerHTML = posts.map(p => `
+        <div class="discuss-card" id="dc-${p.id}">
+          <div class="dc-head">
+            <div class="avatar" ${p.avatar_color?`style="background:${p.avatar_color}"`:''}>${escapeHtml(p.author_initials||'?')}</div>
+            <div class="pc-meta">
+              <div class="pc-name">${escapeHtml(p.author_name)}</div>
+              <div class="pc-book">${timeAgo(p.created_at)}${p.book_title ? ' · ' + escapeHtml(p.book_title) : ''}</div>
+            </div>
+          </div>
+          <div class="dc-body">${escapeHtml(p.body)}</div>
+          <div class="dc-actions">
+            <button class="dc-btn" onclick="handleResonate(${p.id}, this)">${icon('heart')}<span>${p.resonate_count}</span></button>
+            <button class="dc-btn" onclick="toggleComments(${p.id})">${icon('chat')}<span>${p.comment_count} ${p.comment_count===1?'reply':'replies'}</span></button>
+          </div>
+          <div class="comments" id="comments-${p.id}" style="display:none"></div>
+        </div>`).join('');
+    } catch (err) { list.innerHTML = '<div class="empty-state">Couldn\'t load discussions.</div>'; console.error(err); }
+  }
+
+  async function toggleComments(postId) {
+    const box = document.getElementById('comments-' + postId);
+    if (box.style.display === 'block') { box.style.display = 'none'; return; }
+    box.style.display = 'block';
+    box.innerHTML = '<div class="empty-state">Loading replies…</div>';
+    await renderComments(postId);
+  }
+
+  async function renderComments(postId) {
+    const box = document.getElementById('comments-' + postId);
+    try {
+      const { comments } = await api(`/posts/${postId}/comments`);
+      const threads = comments.map(c => `
+        <div class="comment">
+          <div class="avatar">${escapeHtml(c.author_initials || '?')}</div>
+          <div class="comment-body">
+            <div class="comment-author">${escapeHtml(c.author_name)}<span class="comment-time">${timeAgo(c.created_at)}</span></div>
+            <div class="comment-text">${escapeHtml(c.body)}</div>
+          </div>
+        </div>`).join('') || '<div class="empty-state" style="padding:6px">No replies yet — say the first thing.</div>';
+      box.innerHTML = threads + `
+        <div class="add-row" style="margin-top:6px">
+          <input type="text" id="cmt-${postId}" placeholder="Write a reply…" onkeydown="if(event.key==='Enter')handleAddComment(${postId})">
+          <button class="icon-btn" onclick="handleAddComment(${postId})" title="Reply">${icon('chat')}</button>
+        </div>`;
+    } catch (err) { box.innerHTML = '<div class="empty-state">Couldn\'t load replies.</div>'; }
+  }
+
+  async function handleAddComment(postId) {
+    const inp = document.getElementById('cmt-' + postId);
+    const body = inp.value.trim();
+    if (!body) return;
+    try {
+      await api(`/posts/${postId}/comments`, { method: 'POST', body: { body } });
+      await renderComments(postId);
+      loadDiscuss();
+    } catch (err) { toast(err.message, 'err'); }
+  }
+
+  // Open a quote's discussion from the Quote Wall: jump to Discuss is wrong
+  // (quotes aren't discussions), so we open an inline thread modal instead.
+  async function openDiscussThread(postId) {
+    openModal(`
+      <div class="modal-head"><div><h3>Discussion</h3><p>Replies on this quote</p></div>
+      <button class="modal-close" onclick="closeModal()">${icon('close')}</button></div>
+      <div class="modal-body"><div class="comments" id="comments-${postId}" style="display:block;border:none;padding-top:0;margin-top:0"></div></div>`);
+    await renderComments(postId);
+  }
+
+  // ---------- NOTES ----------
+  async function loadNotes() {
+    const list = document.getElementById('notesList');
+    list.innerHTML = '<div class="empty-state">Loading notes…</div>';
+    try {
+      const { notes } = await api('/notes');
+      if (!notes.length) {
+        list.innerHTML = '<div class="empty-state">Nothing saved yet. Tap the bookmark on any quote in the Feed to save it here.</div>';
+        return;
+      }
+      list.innerHTML = notes.map(n => `
+        <div class="note-card">
+          <div class="note-meta">
+            <span class="note-tag">${n.type === 'quote' ? 'Saved quote' : 'Saved note'}</span>
+            <button class="icon-btn danger" onclick="handleUnsave(${n.id}, this)" title="Remove">${icon('trash')}</button>
+          </div>
+          <div class="note-text">${escapeHtml(n.body)}</div>
+          <div class="note-src">${n.book_title ? '— ' + escapeHtml(n.book_title) + ' · ' : ''}saved from ${escapeHtml(n.author_name)}</div>
+        </div>`).join('');
+    } catch (err) { list.innerHTML = '<div class="empty-state">Couldn\'t load your notes.</div>'; console.error(err); }
+  }
+
+  async function handleUnsave(postId, btn) {
+    try {
+      await api(`/posts/${postId}/save`, { method: 'DELETE' });
+      btn.closest('.note-card').remove();
+      toast('Removed from notes');
+      if (!document.querySelectorAll('#notesList .note-card').length) loadNotes();
+    } catch (err) { toast(err.message, 'err'); }
+  }
+
+  // ---------- GOALS ----------
+  async function loadGoals() {
+    const list = document.getElementById('goalsList');
+    try {
+      const { goals } = await api('/goals');
+      list.innerHTML = goals.length ? goals.map(g => `
+        <div class="goal-item">
+          <div class="goal-check ${g.is_done ? 'done' : ''}" onclick="handleToggleGoal(${g.id})"></div>
+          <div class="goal-text ${g.is_done ? 'done' : ''}">${escapeHtml(g.text)}</div>
+          <button class="goal-del" onclick="handleDeleteGoal(${g.id})" title="Delete">${icon('trash')}</button>
+        </div>`).join('') : '<div class="empty-state" style="padding:8px">No goals yet — add one below.</div>';
+      const { user } = await api('/auth/me');
+      document.getElementById('streakNum').textContent = `🔥 ${user.streak_days}`;
+    } catch (err) { list.innerHTML = '<div class="empty-state">Couldn\'t load goals.</div>'; console.error(err); }
+  }
+
+  async function handleAddGoal() {
+    const inp = document.getElementById('newGoalInput');
+    const text = inp.value.trim();
+    if (!text) return;
+    try {
+      await api('/goals', { method: 'POST', body: { text } });
+      inp.value = '';
+      loadGoals();
+    } catch (err) { toast(err.message, 'err'); }
+  }
+  async function handleToggleGoal(goalId) {
+    try { await api(`/goals/${goalId}/toggle`, { method: 'PATCH' }); loadGoals(); }
+    catch (err) { toast(err.message, 'err'); }
+  }
+  async function handleDeleteGoal(goalId) {
+    try { await api(`/goals/${goalId}`, { method: 'DELETE' }); loadGoals(); }
+    catch (err) { toast(err.message, 'err'); }
+  }
+
+  // ---------- LEADERBOARD ----------
+  async function loadLeaderboard() {
+    const list = document.getElementById('leaderboardList');
+    try {
+      const { leaderboard } = await api('/leaderboard?limit=5');
+      if (!leaderboard.length) { list.innerHTML = '<div class="empty-state">No pages logged yet this week.</div>'; return; }
+      const max = leaderboard[0].total_pages || 1;
+      list.innerHTML = leaderboard.map((row, i) => {
+        const isMe = currentUser && row.user_id === currentUser.id;
+        const pct = Math.round((row.total_pages / max) * 100);
+        return `
+          <div class="lb-item">
+            <div class="lb-rank ${i === 0 ? 'gold' : ''}">${i + 1}</div>
+            <div class="lb-name">${isMe ? 'You' : escapeHtml(row.name)}</div>
+            <div class="lb-pages">${row.total_pages} pg</div>
+            <div class="lb-bar"><div class="lb-fill" style="width:${pct}%"></div></div>
+          </div>`;
+      }).join('');
+    } catch (err) { list.innerHTML = '<div class="empty-state">Couldn\'t load the leaderboard.</div>'; console.error(err); }
+  }
+
+  // ---------- EVENTS ----------
+  async function loadEvents() {
+    const list = document.getElementById('eventsList');
+    try {
+      const { events } = await api('/events');
+      if (!events.length) { list.innerHTML = '<div class="empty-state">No upcoming events. Add one with the + above.</div>'; return; }
+      list.innerHTML = events.map(e => {
+        const d = new Date(e.event_date + 'T00:00:00');
+        const day = d.toLocaleDateString('en-US', { day: '2-digit' });
+        const mon = d.toLocaleDateString('en-US', { month: 'short' });
+        const canDelete = currentUser && (currentUser.role === 'admin' || e.created_by === currentUser.id);
+        return `
+          <div class="event-item">
+            <div class="event-date"><span class="ev-day">${day}</span><span class="ev-mon">${mon}</span></div>
+            <div class="event-info">
+              <div class="ev-title">${escapeHtml(e.title)}</div>
+              <div class="ev-desc">${escapeHtml(e.description || '')}</div>
+              ${e.created_by_name ? `<div class="ev-by">added by ${escapeHtml(e.created_by_name)}</div>` : ''}
+            </div>
+            ${canDelete ? `<button class="event-del" onclick="handleDeleteEvent(${e.id})" title="Delete">${icon('trash')}</button>` : ''}
+          </div>`;
+      }).join('');
+    } catch (err) { list.innerHTML = '<div class="empty-state">Couldn\'t load events.</div>'; console.error(err); }
+  }
+
+  function openEventModal() {
+    const today = new Date().toISOString().slice(0, 10);
+    openModal(`
+      <div class="modal-head">
+        <div><h3>New Event</h3><p>Add it to the Fraternity Events panel.</p></div>
+        <button class="modal-close" onclick="closeModal()">${icon('close')}</button>
+      </div>
+      <div class="modal-body">
+        <div class="field"><label>Title *</label><input type="text" id="evTitle" placeholder="e.g. Weekly Reading Circle"></div>
+        <div class="field"><label>Date *</label><input type="date" id="evDate" min="${today}" value="${today}"></div>
+        <div class="field"><label>Description</label><textarea id="evDesc" placeholder="What's it about? Where / how long?"></textarea></div>
+        <div class="modal-error" id="evError"></div>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+          <button class="btn" id="evSubmit" onclick="handleAddEvent()">${icon('calendar')} Add event</button>
+        </div>
+      </div>`);
+  }
+
+  async function handleAddEvent() {
+    const title = document.getElementById('evTitle').value.trim();
+    const eventDate = document.getElementById('evDate').value;
+    const description = document.getElementById('evDesc').value.trim();
+    const errEl = document.getElementById('evError');
+    errEl.textContent = '';
+    if (!title || !eventDate) { errEl.textContent = 'Title and date are required.'; return; }
+    const btn = document.getElementById('evSubmit'); btn.disabled = true;
+    try {
+      await api('/events', { method: 'POST', body: { title, eventDate, description } });
+      closeModal();
+      toast('Event added');
+      loadEvents();
+    } catch (err) { errEl.textContent = err.message; btn.disabled = false; }
+  }
+
+  async function handleDeleteEvent(id) {
+    try { await api(`/events/${id}`, { method: 'DELETE' }); toast('Event removed'); loadEvents(); }
+    catch (err) { toast(err.message, 'err'); }
+  }
+
+  // ---------- UTILITIES ----------
+  function escapeHtml(str) {
+    if (str == null) return '';
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+  }
+  function escapeAttr(str) { return String(str == null ? '' : str).replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+  function timeAgo(isoString) {
+    if (!isoString) return '';
+    const date = new Date(isoString.replace(' ', 'T') + (isoString.includes('Z') ? '' : 'Z'));
+    const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (seconds < 60) return 'just now';
+    if (seconds < 3600) return Math.floor(seconds / 60) + ' min ago';
+    if (seconds < 86400) return Math.floor(seconds / 3600) + ' hrs ago';
+    if (seconds < 172800) return 'Yesterday';
+    return Math.floor(seconds / 86400) + ' days ago';
+  }
+
+  // ---------- BOOT ----------
+  document.getElementById('heroEyebrow').textContent = 'Summer Reading Marathon · ' + new Date().getFullYear();
+  tryRestoreSession();
+</script>
+</body>
+</html>

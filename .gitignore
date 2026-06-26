@@ -1,0 +1,6 @@
+node_modules/
+.env
+db/marathon.sqlite
+db/*.sqlite
+npm-debug.log
+.DS_Store

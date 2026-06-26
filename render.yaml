@@ -1,0 +1,28 @@
+# One-click, reproducible deploy for Render.
+# In Render: New + → Blueprint → point it at this repo. It reads this file.
+services:
+  - type: web
+    name: reading-marathon
+    runtime: node
+    plan: free            # free tier is fine to start; see DEPLOY-GUIDE for the persistence caveat
+    buildCommand: npm install
+    startCommand: npm start
+    # A persistent disk so the SQLite file survives redeploys (NOT just restarts).
+    # Render's free plan does NOT include disks — if you stay on free, delete this
+    # `disk:` block and read the persistence note in DEPLOY-GUIDE.md. On the $7
+    # Starter plan, keep it: the DB lives at /data/marathon.sqlite and never resets.
+    disk:
+      name: marathon-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true        # Render generates a strong random secret for you
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: DB_PATH
+        value: /data/marathon.sqlite   # matches the disk mountPath above
+      - key: NODE_VERSION
+        value: 20.18.1
